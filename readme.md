@@ -1,4 +1,7 @@
 # Docker
+
+Todas minhas anotações e estudos de Docker estão em meu [Notion público](https://juan-borges.notion.site/Docker-bb24896bc49b47c5a0ed4cb8fee2c4df?pvs=74).
+
 ```sh
 #Rodar Localmente
 node app.js
