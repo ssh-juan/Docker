@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+    frontend:
+      container_name: frontend
+      image: nginx:latest
+      ports:
+        - "8080:80"

@@ -1,1 +1,0 @@
-# Usando variável de ambiente
