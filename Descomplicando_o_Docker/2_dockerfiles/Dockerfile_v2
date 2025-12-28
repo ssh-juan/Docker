@@ -1,0 +1,10 @@
+FROM ubuntu:18.04
+#RUN executa em tempo de build
+RUN apt-get update && apt-get install nginx -y && rm -rf /var/lib/apt/lists/*
+EXPOSE 80
+COPY index.html /var/www/html/
+#CMD executa em tempo de execução
+WORKDIR /var/www/html
+ENV APP_VERSION 2.0.0
+CMD ["nginx", "-g", "daemon off;"]
+#nginx -g "daemon off;" mantém o nginx rodando em primeiro plano

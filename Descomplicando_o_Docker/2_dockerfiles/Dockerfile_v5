@@ -1,0 +1,14 @@
+FROM ubuntu:18.04
+LABEL maintainer="juan_borges"
+RUN apt-get update && apt-get install nginx curl -y && rm -rf /var/lib/apt/lists/*
+EXPOSE 80
+#ADD - Faz o download do arquivo e já coloca no local desejado
+# Para já descompactar o arquivo durante o ADD, precisa ter o arquivo localmente
+# Executar: wget https://github.com/prometheus/node_exporter/releases/download/v1.6.0/node_exporter-1.6.0.linux-amd64.tar.gz
+ADD https://github.com/prometheus/node_exporter/releases/download/v1.6.0/node_exporter-1.6.0.linux-amd64.tar.gz /root/node_exporter
+COPY index.html /var/www/html/
+WORKDIR /var/www/html
+ENV APP_VERSION 2.0.0
+ENTRYPOINT [ "nginx" ]
+CMD ["-g", "daemon off;"]
+HEALTHCHECK --timeout=4s CMD curl -f localhost || exit 1
