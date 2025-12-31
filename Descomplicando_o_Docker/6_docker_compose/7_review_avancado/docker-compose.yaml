@@ -1,0 +1,91 @@
+services:
+  gerador:
+    image: juanbs/gerador-senha:1.0
+    # build:                      # Comentado por enquanto para posterior ajuste na imagem customizada.
+    #   context: ./Dockerfile
+    #   dockerfile: Dockerfile
+    deploy:
+      replicas: 1
+      update_config:
+        order: start-first
+        parallelism: 1
+        delay: 5s
+      labels:
+        juan.bs.dev.environment: "teste"
+        juan.bs.dev.version: "1.0.0"
+      resources:
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+        limits:
+          cpus: '0.50'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8080/"]   # Está dando fail pois a imagem não tem curl instalado, porém o exemplo está correto.
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 5s
+    ports:
+      - "8080:80"
+    networks:
+      - giropops
+    environment:
+      - REDIS_HOST=redis
+    env_file:
+      - .env
+    volumes:
+      - type: volume
+        source: strigus
+        target: /strigus
+    devices:
+      - /dev/usb:/dev/usb
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    depends_on:
+      - redis
+
+
+  redis:
+    image: redis:latest
+    labels:
+      juan.bs.dev.environment: "teste"
+      juan.bs.dev.version: "1.0.0"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      - giropops
+    volumes:
+      - type: volume
+        source: strigus
+        target: /strigus
+
+networks:
+  giropops:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.20.0.0/16"
+    labels:
+      juan.bs.dev.network: "giropops_network"
+
+volumes:
+  strigus:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/juan/Documents/Docker/Descomplicando_o_Docker/6_docker_compose/7_review_avancado
+      o: bind
+    labels:
+      juan.bs.dev.volume: "strigus_volume"
