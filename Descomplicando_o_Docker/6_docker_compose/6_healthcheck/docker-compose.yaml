@@ -1,0 +1,45 @@
+services:
+  gerador:
+    image: juanbs/gerador-senha:1.0
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+        limits:
+          cpus: '0.50'
+          memory: 256M
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8080/"]   # Está dando fail pois a imagem não tem curl instalado, porém o exemplo está correto.
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 5s
+    ports:
+      - "8080:80"
+    networks:
+      - giropops
+    environment:
+      - REDIS_HOST=redis
+    volumes:
+      - strigus:/strigus
+    depends_on:
+      - redis
+  redis:
+    image: redis:latest
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      - giropops
+    volumes:
+      - strigus:/strigus
+
+networks:
+  giropops:
+    driver: bridge
+volumes:
+  strigus:
