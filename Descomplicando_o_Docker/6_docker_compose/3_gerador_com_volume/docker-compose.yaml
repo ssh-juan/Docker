@@ -1,0 +1,27 @@
+services:
+  gerador:
+    image: juanbs/gerador-senha:1.0
+    ports:
+      - "8080:80"
+    networks:
+      - giropops
+    environment:
+      - REDIS_HOST=redis
+    volumes:
+      - strigus:/strigus
+    depends_on:
+      - redis
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - giropops
+    volumes:
+      - strigus:/strigus
+
+networks:
+  giropops:
+    driver: bridge
+volumes:
+  strigus:
