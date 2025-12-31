@@ -1,0 +1,33 @@
+services:
+  gerador:
+    image: juanbs/gerador-senha:1.0
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+        limits:
+          cpus: '0.50'
+          memory: 256M
+    ports:
+      - "8080:80"
+    networks:
+      - giropops
+    environment:
+      - REDIS_HOST=redis
+    volumes:
+      - strigus:/strigus
+    depends_on:
+      - redis
+  redis:
+    image: redis:latest
+    networks:
+      - giropops
+    volumes:
+      - strigus:/strigus
+
+networks:
+  giropops:
+    driver: bridge
+volumes:
+  strigus:
